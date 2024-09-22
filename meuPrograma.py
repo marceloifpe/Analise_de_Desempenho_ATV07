@@ -2,15 +2,15 @@ import sys
 import os
 
 def operar(argumentos, id):
-    # Encontrar a operação
+    # Operações permitidas
     operacoes = {"+", "-", "*", "/"}
+    
+    # Separar números e operador
+    numeros = [float(arg) for arg in argumentos if arg.replace('.', '', 1).isdigit()]
     operacao = next((arg for arg in argumentos if arg in operacoes), None)
 
-    # Encontrar os valores
-    numeros = [float(arg) for arg in argumentos if arg.replace('.', '', 1).isdigit()]
-
     if operacao is None or len(numeros) != 2:
-        print("Argumentos inválidos!")
+        print(f"Erro na operação {id}: Argumentos inválidos! Certifique-se de fornecer 2 números e 1 operador.")
         return
 
     numero1, numero2 = numeros
@@ -24,7 +24,7 @@ def operar(argumentos, id):
         resultado = numero1 * numero2
     elif operacao == "/":
         if numero2 == 0:
-            print("Erro: Divisão por zero!")
+            print(f"Erro na operação {id}: Divisão por zero!")
             return
         resultado = numero1 / numero2
 
@@ -34,7 +34,6 @@ def operacaoViaArgumento(argumentos):
     operar(argumentos[1:], 1)
 
 def operacaoViaArquivo(nome_arquivo):
-    args = []
     if os.path.exists(nome_arquivo):
         with open(nome_arquivo, "r") as arquivo:
             try:
@@ -43,21 +42,18 @@ def operacaoViaArquivo(nome_arquivo):
                 print("Erro: A primeira linha deve conter a quantidade de operações.")
                 return
             
-            for _ in range(quantidade_operacoes):
+            for i in range(quantidade_operacoes):
                 linha = arquivo.readline().strip()
                 if linha:
-                    args.append(linha)
-        
-        for i in range(len(args)):
-            args[i] = args[i].split(" ")
-            operar(args[i], i + 1)
+                    argumentos = linha.split(" ")
+                    operar(argumentos, i + 1)
     else:
-        print("Arquivo não encontrado!")
+        print("Erro: Arquivo não encontrado!")
 
 def main():
     argumentos = sys.argv
     if len(argumentos) < 2:
-        print("Argumentos insuficientes!")
+        print("Erro: Argumentos insuficientes!")
         sys.exit()
 
     if argumentos[1] == "matematica":
